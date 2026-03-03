@@ -61,7 +61,6 @@ function CameraCard({ cameraId, onClick }: { cameraId: string; onClick?: (camera
   )
 }
 
-
 function ClickableView({
   onClick,
   children,
@@ -91,7 +90,7 @@ function ClickableView({
       {clickPos && (
         <div
           style={{
-            position: 'absolute',
+            position: "absolute",
             left: clickPos[0] - 5,
             top: clickPos[1] - 5,
             width: 10,
@@ -105,7 +104,6 @@ function ClickableView({
     </div>
   )
 }
-
 
 // Main App
 export default function App() {
@@ -125,28 +123,82 @@ export default function App() {
   if (!cameras) return <div>Loading cameras...</div>
 
   return (
-    <div style={{ maxWidth: 700, margin: 'auto' }}>
-      <h2>Calibration Carousel</h2>
+    <div
+      style={{
+        minHeight: "100vh",
+        width: "100vw",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "#f5f5f5", // Optional: helps see the centering
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          maxWidth: 900,
+          padding: "24px",
+          boxSizing: "border-box",
+          backgroundColor: "white",
+          borderRadius: "8px",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+        }}
+      >
+        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
+          Calibration Carousel
+        </h2>
 
-      <Carousel showThumbs={false} infiniteLoop>
-        {cameras.multiimager.map((cam) => (
-          <div
-            key={cam}
-            style={{ display: 'flex', gap: 20, justifyContent: 'center', alignItems: 'center' }}
-          >
-            <ClickableView onClick={handleSingleClick(cam)} >
-              <CameraCard cameraId={cam}/>
-            </ClickableView>
+        <Carousel
+          showThumbs={false}
+          infiniteLoop
+        >
+          {cameras.multiimager.map((cam) => (
+            <div
+              key={cam}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 40, // Increased gap for better spacing
+                padding: "40px 0", // Give the red dots some breathing room
+                width: "100%",
+              }}
+            >
+              <div style={{ textAlign: "center" }}>
+                <ClickableView onClick={handleSingleClick(cam)}>
+                  <CameraCard cameraId={cam} />
+                </ClickableView>
+              </div>
 
-            <ClickableView onClick={handlePTZClick(cameras.ptz)}>
-              <CameraCard cameraId={cameras.ptz} />
-            </ClickableView>
-          </div>
-        ))}
-      </Carousel>
+              <div style={{ textAlign: "center" }}>
+                <ClickableView onClick={handlePTZClick(cameras.ptz)}>
+                  <CameraCard cameraId={cameras.ptz} />
+                </ClickableView>
+              </div>
+            </div>
+          ))}
+        </Carousel>
 
-      {single && <div>Selected camera: {single.cameraId}</div>}
-      {ptz && <div>PTZ clicked: {ptz.cameraId}</div>}
+        <div
+          style={{
+            marginTop: "20px",
+            textAlign: "center",
+            fontSize: "0.9rem",
+            color: "#666",
+          }}
+        >
+          {single && (
+            <div>
+              Selected camera: <strong>{single.cameraId}</strong>
+            </div>
+          )}
+          {ptz && (
+            <div>
+              PTZ clicked: <strong>{ptz.cameraId}</strong>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
-  )
+  );
 }
