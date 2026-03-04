@@ -61,11 +61,12 @@ function CameraCard({
   onClick?: (cameraId: string) => void;
 }) {
   return (
-    <div onClick={() => onClick?.(cameraId)}>
-      <div>{cameraId.toUpperCase()}</div>
+    <div onClick={() => onClick?.(cameraId)} style={{ width: "100%" }}>
+      <div style={{ fontWeight: 'bold' }}>{cameraId.toUpperCase()}</div>
       <img
         src={`https://picsum.photos/320/240?random=${cameraId}`}
         alt={cameraId}
+        style={{ width: "100%", display: "block" }} // Added these styles
       />
     </div>
   );
@@ -96,8 +97,10 @@ function ClickableView({
       onClick={handleClick}
       style={{
         position: "relative",
-        display: "inline-block",
+        // display: "inline-block",
         cursor: "crosshair",
+        display: "block", // Changed from inline-block to block
+        width: "100%",    // Force it to fill the flex: 1 container
       }}
     >
       {children}
@@ -198,7 +201,7 @@ return (
               showStatus={false} // Removed status for a cleaner look
             >
               {cameras.multiimager.map((cam) => (
-                <div key={cam} style={{ textAlign: "center" }}>
+                <div key={cam} style={{ textAlign: "center" , width: "100%"}}>
                   <ClickableView onClick={handleSingleClick(cam)}>
                     <CameraCard cameraId={cam} />
                   </ClickableView>
@@ -208,7 +211,7 @@ return (
           </div>
 
           {/* Wrapper for PTZ to match Carousel width */}
-          <div style={{ flex: 1, textAlign: "center" }}>
+          <div style={{ flex: 1, textAlign: "center", width: "100%" }}>
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
               <CameraCard cameraId={cameras.ptz} />
             </ClickableView>
