@@ -122,6 +122,18 @@ export default function App() {
 
   if (!cameras) return <div>Loading cameras...</div>
 
+  const customRenderThumbs = () => {
+    return cameras.multiimager.map((cam) => (
+      <div key={`thumb-${cam}`} style={{ cursor: 'pointer' }}>
+        <img
+          src={`https://picsum.photos/320/240?random=${cam}`}
+          alt={`Thumbnail ${cam}`}
+          style={{ width: '100%', height: 'auto', borderRadius: '4px' }}
+        />
+      </div>
+    ))
+  }
+
   return (
     <div
       style={{
@@ -149,8 +161,14 @@ export default function App() {
         </h2>
 
         <Carousel
-          showThumbs={false}
+          showThumbs={true}
+          renderThumbs={customRenderThumbs}
+          showIndicators={false} // Disable the dots since we have images now
           infiniteLoop
+          transitionTime={0}        // Makes the swap instant
+          swipeable={false}         // Disables mouse dragging animation
+          animationHandler="fade"   // Prevents the sliding motion logic
+          stopOnHover={false}
         >
           {cameras.multiimager.map((cam) => (
             <div
