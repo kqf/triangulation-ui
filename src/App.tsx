@@ -149,7 +149,7 @@ export default function App() {
     ));
   };
 
-  return (
+return (
     <div
       style={{
         minHeight: "100vh",
@@ -157,7 +157,7 @@ export default function App() {
         display: "flex",
         alignItems: "flex-start",
         justifyContent: "center",
-        background: "#f5f5f5", // Optional: helps see the centering
+        background: "#f5f5f5",
       }}
     >
       <div
@@ -169,41 +169,46 @@ export default function App() {
           backgroundColor: "white",
           borderRadius: "8px",
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          marginTop: "40px" // Added margin top to replace the flex centering
         }}
       >
         <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
           Calibration Carousel
         </h2>
+
         <div
-          // key={cam}
           style={{
             display: "flex",
             justifyContent: "center",
-            alignItems: "center",
-            gap: 40, // Increased gap for better spacing
-            padding: "40px 0", // Give the red dots some breathing room
+            alignItems: "flex-start", // 1. Align to top so images stay level
+            gap: 0,                   // 2. Remove gap for "no gaps" look
             width: "100%",
           }}
         >
-          <Carousel
-            showThumbs={true}
-            renderThumbs={customRenderThumbs}
-            showIndicators={false} // Disable the dots since we have images now
-            infiniteLoop
-            transitionTime={0} // Makes the swap instant
-            swipeable={false} // Disables mouse dragging animation
-            // animationHandler="fade"   // Prevents the sliding motion logic
-            stopOnHover={false}
-          >
-            {cameras.multiimager.map((cam) => (
-              <div style={{ textAlign: "center" }}>
-                <ClickableView onClick={handleSingleClick(cam)}>
-                  <CameraCard cameraId={cam} />
-                </ClickableView>
-              </div>
-            ))}
-          </Carousel>
-          <div style={{ textAlign: "center" }}>
+          {/* Wrapper for Carousel to control width */}
+          <div style={{ flex: 1 }}>
+            <Carousel
+              showThumbs={true}
+              renderThumbs={customRenderThumbs}
+              showIndicators={false}
+              infiniteLoop
+              transitionTime={0}
+              swipeable={false}
+              stopOnHover={false}
+              showStatus={false} // Removed status for a cleaner look
+            >
+              {cameras.multiimager.map((cam) => (
+                <div key={cam} style={{ textAlign: "center" }}>
+                  <ClickableView onClick={handleSingleClick(cam)}>
+                    <CameraCard cameraId={cam} />
+                  </ClickableView>
+                </div>
+              ))}
+            </Carousel>
+          </div>
+
+          {/* Wrapper for PTZ to match Carousel width */}
+          <div style={{ flex: 1, textAlign: "center" }}>
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
               <CameraCard cameraId={cameras.ptz} />
             </ClickableView>
