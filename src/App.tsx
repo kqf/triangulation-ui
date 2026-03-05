@@ -225,7 +225,7 @@ export default function App() {
               <CameraCard
                 cameraId={cameras.ptz}
                 width={640}
-                height={240}
+                height={200}
                 imgRef={ptzImageRef}
               />
             </ClickableView>
