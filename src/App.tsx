@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-// --- Types & API Stubs ---
 interface CamerasIDS {
   multiimager: string[];
   ptz: string;
@@ -18,8 +17,9 @@ const fetchCameras = async (): Promise<CamerasIDS> => {
   };
 };
 
-// --- Custom Hooks ---
-function useCalibrationClick(apiCall: (single: CameraClick, ptz: CameraClick) => void) {
+function useCalibrationClick(
+  apiCall: (single: CameraClick, ptz: CameraClick) => void,
+) {
   const [single, setSingle] = useState<CameraClick | null>(null);
   const [ptz, setPTZ] = useState<CameraClick | null>(null);
 
@@ -48,8 +48,6 @@ function useCalibrationClick(apiCall: (single: CameraClick, ptz: CameraClick) =>
   return { single, ptz, handleSingleClick, handlePTZClick };
 }
 
-// --- Components ---
-
 function CameraCard({
   cameraId,
   width = 320,
@@ -67,7 +65,9 @@ function CameraCard({
 }) {
   return (
     <div style={{ width: "100%" }}>
-      <div style={{ fontWeight: "bold", fontSize: "12px", marginBottom: "4px" }}>
+      <div
+        style={{ fontWeight: "bold", fontSize: "12px", marginBottom: "4px" }}
+      >
         {cameraId.toUpperCase()}
       </div>
       <img
@@ -134,16 +134,14 @@ function ClickableView({
   );
 }
 
-// --- Main App ---
 export default function App() {
   const [cameras, setCameras] = useState<CamerasIDS | null>(null);
   const ptzImageRef = useRef<HTMLImageElement>(null);
   const [ptzImageHeight, setPtzImageHeight] = useState<number | null>(null);
   const [leftAspectRatio, setLeftAspectRatio] = useState<number | null>(null);
 
-  const { single, ptz, handleSingleClick, handlePTZClick } = useCalibrationClick(
-    (s, p) => console.log("API call:", s, p)
-  );
+  const { single, ptz, handleSingleClick, handlePTZClick } =
+    useCalibrationClick((s, p) => console.log("API call:", s, p));
 
   useEffect(() => {
     fetchCameras().then(setCameras);
@@ -179,21 +177,34 @@ export default function App() {
     ));
 
   return (
-    <div style={{ minHeight: "100vh", padding: "40px 20px", background: "#f5f5f5" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        padding: "40px 20px",
+        background: "#f5f5f5",
+        display: "flex", // Add this
+        alignItems: "center", // Vertical center
+        justifyContent: "center", // Horizontal center
+      }}
+    >
       <div
         style={{
-          // maxWidth: "1200px",
+          width: "100%",
           margin: "0 auto",
           backgroundColor: "white",
           padding: "24px",
           borderRadius: "12px",
           boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
+
         }}
       >
-        <h2 style={{ textAlign: "center", marginBottom: "30px" }}>Calibration Studio</h2>
+        <h2 style={{ textAlign: "center", marginBottom: "30px" }}>
+          Calibration Studio
+        </h2>
 
-        <div style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
-
+        <div style={{ display: "flex", alignItems: "flex-start",
+          justifyContent: "center", // Ensures the two images stay together in t
+         }}>
           {/* Left: Carousel — width derived from PTZ height + own aspect ratio */}
           <div style={{ width: leftPanelWidth, flexShrink: 0, minWidth: 0 }}>
             <Carousel
@@ -211,7 +222,9 @@ export default function App() {
                       cameraId={cam}
                       forcedImageHeight={ptzImageHeight}
                       // Only capture aspect ratio from the first image
-                      onAspectRatioLoad={i === 0 ? setLeftAspectRatio : undefined}
+                      onAspectRatioLoad={
+                        i === 0 ? setLeftAspectRatio : undefined
+                      }
                     />
                   </ClickableView>
                 </div>
@@ -225,18 +238,28 @@ export default function App() {
               <CameraCard
                 cameraId={cameras.ptz}
                 width={640}
-                height={200}
+                height={488}
                 imgRef={ptzImageRef}
               />
             </ClickableView>
           </div>
-
         </div>
 
-        <div style={{ marginTop: "30px", borderTop: "1px solid #eee", paddingTop: "20px", textAlign: "center" }}>
+        <div
+          style={{
+            marginTop: "30px",
+            borderTop: "1px solid #eee",
+            paddingTop: "20px",
+            textAlign: "center",
+          }}
+        >
           <div style={{ display: "inline-flex", gap: "40px" }}>
-            <p>Left Selection: <b>{single?.cameraId || "None"}</b></p>
-            <p>Right Selection: <b>{ptz?.cameraId || "None"}</b></p>
+            <p>
+              Left Selection: <b>{single?.cameraId || "None"}</b>
+            </p>
+            <p>
+              Right Selection: <b>{ptz?.cameraId || "None"}</b>
+            </p>
           </div>
         </div>
       </div>
