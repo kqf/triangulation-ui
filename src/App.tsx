@@ -189,22 +189,27 @@ export default function App() {
     >
       <div
         style={{
-          width: "100%",
-          margin: "0 auto",
+          width: "auto",
+          maxWidth: "95vw",
           backgroundColor: "white",
-          padding: "24px",
+          padding: "32px",
           borderRadius: "12px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.05)",
-
+          boxShadow: "0 10px 25px rgba(255,0,0,0.05)",
+          display: "flex",
+          flexDirection: "column",
         }}
       >
         <h2 style={{ textAlign: "center", marginBottom: "30px" }}>
           Calibration Studio
         </h2>
 
-        <div style={{ display: "flex", alignItems: "flex-start",
-          justifyContent: "center", // Ensures the two images stay together in t
-         }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "center", // Ensures the two images stay together in t
+          }}
+        >
           {/* Left: Carousel — width derived from PTZ height + own aspect ratio */}
           <div style={{ width: leftPanelWidth, flexShrink: 0, minWidth: 0 }}>
             <Carousel
