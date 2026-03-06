@@ -50,28 +50,19 @@ function useCalibrationClick(
 
 function CameraCard({
   cameraId,
+  onClick,
   width = 320,
   height = 240,
-  imgRef,
-  forcedImageHeight,
-  onAspectRatioLoad,
 }: {
   cameraId: string;
+  onClick?: (cameraId: string) => void;
   width?: number;
   height?: number;
-  imgRef?: React.Ref<HTMLImageElement>;
-  forcedImageHeight?: number | null;
-  onAspectRatioLoad?: (ratio: number) => void;
 }) {
   return (
-    <div style={{ width: "100%" }}>
-      <div
-        style={{ fontWeight: "bold", fontSize: "12px", marginBottom: "4px" }}
-      >
-        {cameraId.toUpperCase()}
-      </div>
+    <div onClick={() => onClick?.(cameraId)} style={{ width: "100%" }}>
+      <div style={{ fontWeight: "bold" }}>{cameraId.toUpperCase()}</div>
       <img
-        ref={imgRef}
         src={`https://picsum.photos/${width}/${height}?random=${cameraId}`}
         alt={cameraId}
         onLoad={(e) => {
@@ -112,7 +103,13 @@ function ClickableView({
     <div
       ref={containerRef}
       onClick={handleClick}
-      style={{ position: "relative", cursor: "crosshair", width: "100%" }}
+      style={{
+        position: "relative",
+        // display: "inline-block",
+        cursor: "crosshair",
+        display: "block", // Changed from inline-block to block
+        width: "100%", // Force it to fill the flex: 1 container
+      }}
     >
       {children}
       {clickPos && (
@@ -180,7 +177,10 @@ export default function App() {
     <div
       style={{
         minHeight: "100vh",
-        padding: "40px 20px",
+        width: "100vw",
+        display: "flex",
+        alignItems: "stretch", // ← key: both children stretch to same height
+        justifyContent: "center",
         background: "#f5f5f5",
         display: "flex", // Add this
         alignItems: "center", // Vertical center
@@ -192,11 +192,9 @@ export default function App() {
           width: "auto",
           maxWidth: "95vw",
           backgroundColor: "white",
-          padding: "32px",
-          borderRadius: "12px",
-          boxShadow: "0 10px 25px rgba(255,0,0,0.05)",
-          display: "flex",
-          flexDirection: "column",
+          borderRadius: "8px",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          marginTop: "40px", // Added margin top to replace the flex centering
         }}
       >
         <h2 style={{ textAlign: "center", marginBottom: "30px" }}>
@@ -206,8 +204,10 @@ export default function App() {
         <div
           style={{
             display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "center", // Ensures the two images stay together in t
+            justifyContent: "center",
+            alignItems: "flex-start", // 1. Align to top so images stay level
+            gap: 0, // 2. Remove gap for "no gaps" look
+            width: "100%",
           }}
         >
           {/* Left: Carousel — width derived from PTZ height + own aspect ratio */}
@@ -220,8 +220,8 @@ export default function App() {
               transitionTime={300}
               showStatus={false}
             >
-              {cameras.multiimager.map((cam, i) => (
-                <div key={cam}>
+              {cameras.multiimager.map((cam) => (
+                <div key={cam} style={{ textAlign: "center", width: "100%" }}>
                   <ClickableView onClick={handleSingleClick(cam)}>
                     <CameraCard
                       cameraId={cam}
@@ -240,12 +240,7 @@ export default function App() {
           {/* Right: PTZ — fills remaining space, dictates height */}
           <div style={{ flex: 1, minWidth: 0 }}>
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
-              <CameraCard
-                cameraId={cameras.ptz}
-                width={640}
-                height={488}
-                imgRef={ptzImageRef}
-              />
+              <CameraCard cameraId={cameras.ptz} width={640} height={200}/>
             </ClickableView>
           </div>
         </div>
