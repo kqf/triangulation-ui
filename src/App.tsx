@@ -56,15 +56,19 @@ function useCalibrationClick(
 function CameraCard({
   cameraId,
   onClick,
+  width = 320,
+  height = 240,
 }: {
   cameraId: string;
   onClick?: (cameraId: string) => void;
+  width?: number;
+  height?: number;
 }) {
   return (
     <div onClick={() => onClick?.(cameraId)} style={{ width: "100%" }}>
-      <div style={{ fontWeight: 'bold' }}>{cameraId.toUpperCase()}</div>
+      <div style={{ fontWeight: "bold" }}>{cameraId.toUpperCase()}</div>
       <img
-        src={`https://picsum.photos/320/240?random=${cameraId}`}
+        src={`https://picsum.photos/${width}/${height}?random=${cameraId}`}
         alt={cameraId}
         style={{ width: "100%", display: "block" }} // Added these styles
       />
@@ -100,7 +104,7 @@ function ClickableView({
         // display: "inline-block",
         cursor: "crosshair",
         display: "block", // Changed from inline-block to block
-        width: "100%",    // Force it to fill the flex: 1 container
+        width: "100%", // Force it to fill the flex: 1 container
       }}
     >
       {children}
@@ -152,13 +156,13 @@ export default function App() {
     ));
   };
 
-return (
+  return (
     <div
       style={{
         minHeight: "100vh",
         width: "100vw",
         display: "flex",
-        alignItems: "flex-start",
+        alignItems: "stretch", // ← key: both children stretch to same height
         justifyContent: "center",
         background: "#f5f5f5",
       }}
@@ -172,7 +176,7 @@ return (
           backgroundColor: "white",
           borderRadius: "8px",
           boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-          marginTop: "40px" // Added margin top to replace the flex centering
+          marginTop: "40px", // Added margin top to replace the flex centering
         }}
       >
         <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
@@ -184,7 +188,7 @@ return (
             display: "flex",
             justifyContent: "center",
             alignItems: "flex-start", // 1. Align to top so images stay level
-            gap: 0,                   // 2. Remove gap for "no gaps" look
+            gap: 0, // 2. Remove gap for "no gaps" look
             width: "100%",
           }}
         >
@@ -201,7 +205,7 @@ return (
               showStatus={false} // Removed status for a cleaner look
             >
               {cameras.multiimager.map((cam) => (
-                <div key={cam} style={{ textAlign: "center" , width: "100%"}}>
+                <div key={cam} style={{ textAlign: "center", width: "100%" }}>
                   <ClickableView onClick={handleSingleClick(cam)}>
                     <CameraCard cameraId={cam} />
                   </ClickableView>
@@ -213,7 +217,7 @@ return (
           {/* Wrapper for PTZ to match Carousel width */}
           <div style={{ flex: 1, textAlign: "center", width: "100%" }}>
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
-              <CameraCard cameraId={cameras.ptz} />
+              <CameraCard cameraId={cameras.ptz} width={640} height={200}/>
             </ClickableView>
           </div>
         </div>
