@@ -9,7 +9,6 @@ interface CamerasIDS {
 
 type CameraClick = { cameraId: string; pos: [number, number] };
 
-// Fake backend fetch
 const fetchCameras = async (): Promise<CamerasIDS> => {
   await new Promise((resolve) => setTimeout(resolve, 500));
 
@@ -19,7 +18,6 @@ const fetchCameras = async (): Promise<CamerasIDS> => {
   };
 };
 
-// calibration click hook
 function useCalibrationClick(
   apiCall: (single: CameraClick, ptz: CameraClick) => void
 ) {
@@ -56,37 +54,30 @@ function useCalibrationClick(
 
 function CameraCard({
   cameraId,
-  onClick,
   width = 320,
   height = 240,
 }: {
   cameraId: string;
-  onClick?: (cameraId: string) => void;
   width?: number;
   height?: number;
 }) {
   return (
     <div
-      onClick={() => onClick?.(cameraId)}
       style={{
         width: "100%",
         height: "100%",
-        display: "flex",
-        flexDirection: "column",
       }}
     >
-      <div style={{ flex: 1 }}>
-        <img
-          src={`https://picsum.photos/${width}/${height}?random=${cameraId}`}
-          alt={cameraId}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "contain",
-            display: "block",
-          }}
-        />
-      </div>
+      <img
+        src={`https://picsum.photos/${width}/${height}?random=${cameraId}`}
+        alt={cameraId}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          display: "block",
+        }}
+      />
     </div>
   );
 }
@@ -169,7 +160,6 @@ export default function App() {
           style={{
             width: "100%",
             height: "auto",
-            borderRadius: "4px",
           }}
         />
       </div>
@@ -206,50 +196,47 @@ export default function App() {
             display: "flex",
             alignItems: "stretch",
             gap: 16,
-            width: "100%",
           }}
         >
           {/* LEFT COLUMN */}
           <div
             style={{
-              flex: 1,
-              minWidth: 0,
               display: "flex",
               flexDirection: "column",
+              flex: 1,
+              minWidth: 0,
             }}
           >
-            <div style={{ flex: 1 }}>
-              <Carousel
-                showThumbs
-                renderThumbs={customRenderThumbs}
-                showIndicators={false}
-                infiniteLoop
-                transitionTime={0}
-                swipeable={false}
-                stopOnHover={false}
-                showStatus={false}
-              >
-                {cameras.multiimager.map((cam) => (
-                  <div key={cam} style={{ height: "100%" }}>
-                    <ClickableView onClick={handleSingleClick(cam)}>
-                      <CameraCard cameraId={cam} />
-                    </ClickableView>
-                  </div>
-                ))}
-              </Carousel>
-            </div>
+            <Carousel
+              showThumbs
+              renderThumbs={customRenderThumbs}
+              showIndicators={false}
+              infiniteLoop
+              transitionTime={0}
+              swipeable={false}
+              stopOnHover={false}
+              showStatus={false}
+            >
+              {cameras.multiimager.map((cam) => (
+                <div key={cam} style={{ height: "100%" }}>
+                  <ClickableView onClick={handleSingleClick(cam)}>
+                    <CameraCard cameraId={cam} />
+                  </ClickableView>
+                </div>
+              ))}
+            </Carousel>
           </div>
 
           {/* RIGHT COLUMN */}
           <div
             style={{
               flex: 1,
-              minWidth: 0,
               display: "flex",
+              minWidth: 0,
             }}
           >
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
-              <CameraCard cameraId={cameras.ptz} width={640} height={200}/>
+              <CameraCard cameraId={cameras.ptz} width={640} height={640} />
             </ClickableView>
           </div>
         </div>
