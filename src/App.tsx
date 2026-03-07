@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { Carousel } from "react-responsive-carousel";
-import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { Galleria } from "primereact/galleria";
+import "primereact/resources/themes/lara-light-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 interface CamerasIDS {
   multiimager: string[];
@@ -19,7 +21,7 @@ const fetchCameras = async (): Promise<CamerasIDS> => {
 };
 
 function useCalibrationClick(
-  apiCall: (single: CameraClick, ptz: CameraClick) => void
+  apiCall: (single: CameraClick, ptz: CameraClick) => void,
 ) {
   const [single, setSingle] = useState<CameraClick | null>(null);
   const [ptz, setPTZ] = useState<CameraClick | null>(null);
@@ -35,19 +37,17 @@ function useCalibrationClick(
     }
   };
 
-  const handleSingleClick =
-    (cameraId: string) => (x: number, y: number) => {
-      const click: CameraClick = { cameraId, pos: [x, y] };
-      setSingle(click);
-      tryUpload(click, undefined);
-    };
+  const handleSingleClick = (cameraId: string) => (x: number, y: number) => {
+    const click: CameraClick = { cameraId, pos: [x, y] };
+    setSingle(click);
+    tryUpload(click, undefined);
+  };
 
-  const handlePTZClick =
-    (cameraId: string) => (x: number, y: number) => {
-      const click: CameraClick = { cameraId, pos: [x, y] };
-      setPTZ(click);
-      tryUpload(undefined, click);
-    };
+  const handlePTZClick = (cameraId: string) => (x: number, y: number) => {
+    const click: CameraClick = { cameraId, pos: [x, y] };
+    setPTZ(click);
+    tryUpload(undefined, click);
+  };
 
   return { single, ptz, handleSingleClick, handlePTZClick };
 }
@@ -151,19 +151,13 @@ export default function App() {
 
   if (!cameras) return <div>Loading cameras...</div>;
 
-  const customRenderThumbs = () =>
-    cameras.multiimager.map((cam) => (
-      <div key={`thumb-${cam}`}>
-        <img
-          src={`https://picsum.photos/200/150?random=${cam}`}
-          alt={cam}
-          style={{
-            width: "100%",
-            height: "auto",
-          }}
-        />
-      </div>
-    ));
+  const itemTemplate = (cam: string) => (
+    <ClickableView onClick={handleSingleClick(cam)}>
+      <CameraCard cameraId={cam} />
+    </ClickableView>
+  );
+
+  const thumbnailTemplate = (cam: string) => <CameraCard cameraId={cam} />;
 
   return (
     <div
@@ -207,24 +201,16 @@ export default function App() {
               minWidth: 0,
             }}
           >
-            <Carousel
-              showThumbs
-              renderThumbs={customRenderThumbs}
+            <Galleria
+              value={cameras.multiimager}
+              item={itemTemplate}
+              thumbnail={thumbnailTemplate}
               showIndicators={false}
-              infiniteLoop
-              transitionTime={0}
-              swipeable={false}
-              stopOnHover={false}
-              showStatus={false}
-            >
-              {cameras.multiimager.map((cam) => (
-                <div key={cam} style={{ height: "100%" }}>
-                  <ClickableView onClick={handleSingleClick(cam)}>
-                    <CameraCard cameraId={cam} />
-                  </ClickableView>
-                </div>
-              ))}
-            </Carousel>
+              showItemNavigators={false}
+              showThumbnailNavigators={false}
+              circular
+              numVisible={4}
+            />
           </div>
 
           {/* RIGHT COLUMN */}
@@ -236,7 +222,7 @@ export default function App() {
             }}
           >
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
-              <CameraCard cameraId={cameras.ptz} width={640} height={640} />
+              <CameraCard cameraId={cameras.ptz} width={640} height={200} />
             </ClickableView>
           </div>
         </div>
