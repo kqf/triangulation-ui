@@ -74,8 +74,7 @@ function CameraCard({
         style={{
           width: "100%",
           height: "100%",
-          objectFit: "cover",
-          display: "block",
+          objectFit: "contain",
         }}
       />
     </div>
@@ -181,10 +180,6 @@ export default function App() {
           boxSizing: "border-box",
         }}
       >
-        <h2 style={{ textAlign: "center", marginBottom: 20 }}>
-          Calibration Carousel
-        </h2>
-
         <div
           style={{
             display: "flex",
@@ -193,14 +188,7 @@ export default function App() {
           }}
         >
           {/* LEFT COLUMN */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              flex: 1,
-              minWidth: 0,
-            }}
-          >
+          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
             <Galleria
               value={cameras.multiimager}
               item={itemTemplate}
@@ -210,17 +198,12 @@ export default function App() {
               showThumbnailNavigators={false}
               circular
               numVisible={4}
+              style={{ flex: 1 }} // force Galleria to take full height
             />
           </div>
 
           {/* RIGHT COLUMN */}
-          <div
-            style={{
-              flex: 1,
-              display: "flex",
-              minWidth: 0,
-            }}
-          >
+          <div style={{ flex: 3, display: "flex", flexDirection: "column" }}>
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
               <CameraCard cameraId={cameras.ptz} width={640} height={200} />
             </ClickableView>
