@@ -81,6 +81,27 @@ function CameraCard({
   );
 }
 
+function SbSView({ children }: { children: React.ReactNode[] }) {
+  const [left, right] = children;
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "stretch",
+        gap: 16,
+      }}
+    >
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        {left}
+      </div>
+      <div style={{ flex: 3, display: "flex", flexDirection: "column" }}>
+        {right}
+      </div>
+    </div>
+  );
+}
+
+
 function ClickableView({
   onClick,
   children,
@@ -180,15 +201,7 @@ export default function App() {
           boxSizing: "border-box",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "stretch",
-            gap: 16,
-          }}
-        >
-          {/* LEFT COLUMN */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <SbSView>
             <Galleria
               value={cameras.multiimager}
               item={itemTemplate}
@@ -200,16 +213,11 @@ export default function App() {
               numVisible={4}
               style={{ flex: 1 }} // force Galleria to take full height
             />
-          </div>
 
-          {/* RIGHT COLUMN */}
-          <div style={{ flex: 3, display: "flex", flexDirection: "column" }}>
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
               <CameraCard cameraId={cameras.ptz} width={640} height={200} />
             </ClickableView>
-          </div>
-        </div>
-
+        </SbSView>
         <div
           style={{
             marginTop: 20,
