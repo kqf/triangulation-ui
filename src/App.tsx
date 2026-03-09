@@ -71,6 +71,7 @@ function CameraCard({
       <img
         src={`https://picsum.photos/${width}/${height}?random=${cameraId}`}
         alt={cameraId}
+        draggable={false}
         style={{
           width: "100%",
           height: "100%",
@@ -162,14 +163,51 @@ function CControl({
   children: React.ReactNode;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const startPos = useRef<[number, number] | null>(null);
-  const lastPos = useRef<[number, number] | null>(null);
+  const currentPos = useRef<[number, number] | null>(null);
   const dragging = useRef(false);
+
+  const drawVector = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !startPos.current || !currentPos.current) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const [sx, sy] = startPos.current;
+    const [cx, cy] = currentPos.current;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.beginPath();
+    ctx.moveTo(sx, sy);
+    ctx.lineTo(cx, cy);
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // draw endpoint
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "red";
+    ctx.fill();
+  };
+
+  const clearCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
 
   const sendAsync = async (dx: number, dy: number) => {
     const magnitude = Math.sqrt(dx * dx + dy * dy);
-    const direction = Math.atan2(dy, dx) * (180 / Math.PI);
+    const direction = (Math.atan2(dy, dx) * 180) / Math.PI;
 
     await new Promise((r) => setTimeout(r, 200));
 
@@ -182,32 +220,49 @@ function CControl({
     });
   };
 
+  const getLocalCoords = (e: React.MouseEvent) => {
+    const rect = containerRef.current!.getBoundingClientRect();
+    return [e.clientX - rect.left, e.clientY - rect.top] as [number, number];
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     dragging.current = true;
+    const pos = getLocalCoords(e);
 
-    const pos: [number, number] = [e.clientX, e.clientY];
     startPos.current = pos;
-    lastPos.current = pos;
+    currentPos.current = pos;
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!dragging.current) return;
 
-    lastPos.current = [e.clientX, e.clientY];
+    currentPos.current = getLocalCoords(e);
+    drawVector();
   };
 
   const handleMouseUp = () => {
-    if (!dragging.current || !startPos.current || !lastPos.current) return;
+    if (!dragging.current || !startPos.current || !currentPos.current) return;
 
-    const dx = lastPos.current[0] - startPos.current[0];
-    const dy = lastPos.current[1] - startPos.current[1];
+    const dx = currentPos.current[0] - startPos.current[0];
+    const dy = currentPos.current[1] - startPos.current[1];
 
     sendAsync(dx, dy);
 
     dragging.current = false;
     startPos.current = null;
-    lastPos.current = null;
+    currentPos.current = null;
+
+    clearCanvas();
   };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+  }, []);
 
   return (
     <div
@@ -216,9 +271,25 @@ function CControl({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      style={{ width: "100%", height: "100%", cursor: "grab" }}
+      onDragStart={(e) => e.preventDefault()}
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        cursor: "grab",
+        userSelect: "none",
+      }}
     >
       {children}
+
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          inset: 0,
+          pointerEvents: "none",
+        }}
+      />
     </div>
   );
 }
