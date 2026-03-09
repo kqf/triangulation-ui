@@ -101,7 +101,6 @@ function SbSView({ children }: { children: React.ReactNode[] }) {
   );
 }
 
-
 function ClickableView({
   onClick,
   children,
@@ -155,6 +154,75 @@ function ClickableView({
   );
 }
 
+function CControl({
+  cameraId,
+  children,
+}: {
+  cameraId: string;
+  children: React.ReactNode;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const startPos = useRef<[number, number] | null>(null);
+  const lastPos = useRef<[number, number] | null>(null);
+  const dragging = useRef(false);
+
+  const sendAsync = async (dx: number, dy: number) => {
+    const magnitude = Math.sqrt(dx * dx + dy * dy);
+    const direction = Math.atan2(dy, dx) * (180 / Math.PI);
+
+    await new Promise((r) => setTimeout(r, 200));
+
+    console.log("PTZ MOVE", {
+      cameraId,
+      dx,
+      dy,
+      magnitude,
+      directionDeg: direction,
+    });
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    dragging.current = true;
+
+    const pos: [number, number] = [e.clientX, e.clientY];
+    startPos.current = pos;
+    lastPos.current = pos;
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!dragging.current) return;
+
+    lastPos.current = [e.clientX, e.clientY];
+  };
+
+  const handleMouseUp = () => {
+    if (!dragging.current || !startPos.current || !lastPos.current) return;
+
+    const dx = lastPos.current[0] - startPos.current[0];
+    const dy = lastPos.current[1] - startPos.current[1];
+
+    sendAsync(dx, dy);
+
+    dragging.current = false;
+    startPos.current = null;
+    lastPos.current = null;
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      style={{ width: "100%", height: "100%", cursor: "grab" }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export default function App() {
   const [cameras, setCameras] = useState<CamerasIDS | null>(null);
 
@@ -202,21 +270,23 @@ export default function App() {
         }}
       >
         <SbSView>
-            <Galleria
-              value={cameras.multiimager}
-              item={itemTemplate}
-              thumbnail={thumbnailTemplate}
-              showIndicators={false}
-              showItemNavigators={false}
-              showThumbnailNavigators={false}
-              circular
-              numVisible={4}
-              style={{ flex: 1 }} // force Galleria to take full height
-            />
+          <Galleria
+            value={cameras.multiimager}
+            item={itemTemplate}
+            thumbnail={thumbnailTemplate}
+            showIndicators={false}
+            showItemNavigators={false}
+            showThumbnailNavigators={false}
+            circular
+            numVisible={4}
+            style={{ flex: 1 }} // force Galleria to take full height
+          />
 
+          <CControl cameraId={cameras.ptz}>
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
               <CameraCard cameraId={cameras.ptz} width={640} height={200} />
             </ClickableView>
+          </CControl>
         </SbSView>
         <div
           style={{
