@@ -261,8 +261,16 @@ function CControl({
     const container = containerRef.current;
     if (!canvas || !container) return;
 
-    canvas.width = container.clientWidth;
-    canvas.height = container.clientHeight;
+    const syncSize = () => {
+      canvas.width = container.clientWidth;
+      canvas.height = container.clientHeight;
+    };
+
+    syncSize();
+
+    const ro = new ResizeObserver(syncSize);
+    ro.observe(container);
+    return () => ro.disconnect();
   }, []);
 
   return (
