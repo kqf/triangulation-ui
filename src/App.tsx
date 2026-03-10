@@ -112,17 +112,18 @@ function ClickableView({
   const containerRef = useRef<HTMLDivElement>(null);
   const [clickPos, setClickPos] = useState<[number, number] | null>(null);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
+const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  if (!containerRef.current) return;
 
-    const rect = containerRef.current.getBoundingClientRect();
+  const rect = containerRef.current.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+  setClickPos([x, y]);
+  onClick(x, y);
 
-    setClickPos([x, y]);
-    onClick(x, y);
-  };
+  setTimeout(() => setClickPos(null), 1200);
+};
 
   return (
     <div
