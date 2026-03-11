@@ -87,7 +87,7 @@ function CameraCard({
   );
 }
 
-function SbSView({ children }: { children: React.ReactNode[] }) {
+function SbSView({ children }: { children: [React.ReactNode, React.ReactNode] }) {
   const [left, right] = children;
   return (
     <div
