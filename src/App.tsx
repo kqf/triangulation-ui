@@ -26,12 +26,17 @@ function useCalibrationClick(
   const [single, setSingle] = useState<CameraClick | null>(null);
   const [ptz, setPTZ] = useState<CameraClick | null>(null);
 
-  const tryUpload = (newSingle?: CameraClick, newPTZ?: CameraClick) => {
-    const s = newSingle ?? single;
-    const p = newPTZ ?? ptz;
+  const singleRef = useRef<CameraClick | null>(null);
+  const ptzRef = useRef<CameraClick | null>(null);
 
-    if (s && p) {
-      apiCall(s, p);
+  const tryUpload = (newSingle?: CameraClick, newPTZ?: CameraClick) => {
+    if (newSingle) singleRef.current = newSingle;
+    if (newPTZ) ptzRef.current = newPTZ;
+
+    if (singleRef.current && ptzRef.current) {
+      apiCall(singleRef.current, ptzRef.current);
+      singleRef.current = null;
+      ptzRef.current = null;
       setSingle(null);
       setPTZ(null);
     }
