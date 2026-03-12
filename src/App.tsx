@@ -335,25 +335,10 @@ export default function App() {
   );
 
   const thumbnailTemplate = (cam: string) => (
-  <div style={{ width: 56, height: 42, overflow: "hidden" , margin: 2}}>
-    <CameraCard cameraId={cam} />
-  </div>
-);
-
-  <style>{`
-  .p-galleria,
-  .p-galleria .p-galleria-content,
-  .p-galleria-item-wrapper,
-  .p-galleria-item-container,
-  .p-galleria-item,
-  .p-galleria-thumbnail-wrapper,
-  .p-galleria-thumbnail-container {
-    background: transparent !important;
-  }
-  .p-galleria-thumbnail-item {
-    padding: 2px !important;
-  }
-`}</style>;
+    <div style={{ width: 56, height: 42, overflow: "hidden", margin: 2 }}>
+      <CameraCard cameraId={cam} />
+    </div>
+  );
 
   return (
     <div
@@ -378,17 +363,17 @@ export default function App() {
         }}
       >
         <SbSView>
-          <Galleria
-            value={cameras.multiimager}
-            item={itemTemplate}
-            thumbnail={thumbnailTemplate}
-            showIndicators={false}
-            showItemNavigators={false}
-            showThumbnailNavigators={false}
-            circular
-            numVisible={4}
-            style={{ flex: 1 }} // force Galleria to take full height
-          />
+            <Galleria
+              value={cameras.multiimager}
+              item={itemTemplate}
+              thumbnail={thumbnailTemplate}
+              showIndicators={false}
+              showItemNavigators={false}
+              showThumbnailNavigators={false}
+              circular
+              numVisible={4}
+              style={{ flex: 1, background: 'transparent'}}
+            />
 
           <CControl cameraId={cameras.ptz}>
             <ClickableView onClick={handlePTZClick(cameras.ptz)}>
