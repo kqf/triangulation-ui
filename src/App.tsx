@@ -111,6 +111,7 @@ function SbSView({
   );
 }
 
+
 function ClickableView({
   onClick,
   children,
@@ -121,8 +122,8 @@ function ClickableView({
   const containerRef = useRef<HTMLDivElement>(null);
   const [clickPos, setClickPos] = useState<[number, number] | null>(null);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
+const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  if (!containerRef.current) return;
 
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
