@@ -87,7 +87,11 @@ function CameraCard({
   );
 }
 
-function SbSView({ children }: { children: [React.ReactNode, React.ReactNode] }) {
+function SbSView({
+  children,
+}: {
+  children: [React.ReactNode, React.ReactNode];
+}) {
   const [left, right] = children;
   return (
     <div
@@ -117,18 +121,18 @@ function ClickableView({
   const containerRef = useRef<HTMLDivElement>(null);
   const [clickPos, setClickPos] = useState<[number, number] | null>(null);
 
-const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-  if (!containerRef.current) return;
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
 
-  const rect = containerRef.current.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
-  setClickPos([x, y]);
-  onClick(x, y);
+    setClickPos([x, y]);
+    onClick(x, y);
 
-  setTimeout(() => setClickPos(null), 1200);
-};
+    setTimeout(() => setClickPos(null), 1200);
+  };
 
   return (
     <div
@@ -330,7 +334,26 @@ export default function App() {
     </ClickableView>
   );
 
-  const thumbnailTemplate = (cam: string) => <CameraCard cameraId={cam} />;
+  const thumbnailTemplate = (cam: string) => (
+  <div style={{ width: 56, height: 42, overflow: "hidden" , margin: 2}}>
+    <CameraCard cameraId={cam} />
+  </div>
+);
+
+  <style>{`
+  .p-galleria,
+  .p-galleria .p-galleria-content,
+  .p-galleria-item-wrapper,
+  .p-galleria-item-container,
+  .p-galleria-item,
+  .p-galleria-thumbnail-wrapper,
+  .p-galleria-thumbnail-container {
+    background: transparent !important;
+  }
+  .p-galleria-thumbnail-item {
+    padding: 2px !important;
+  }
+`}</style>;
 
   return (
     <div
